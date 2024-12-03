@@ -56,7 +56,7 @@ namespace SnakeWPF.Pages
             // Запускаем потоки на прослушку 
             MainWindow.mainWindow.StartReceiver();
             // Заполняем IP адрес игрока в модель
-            MainWindow.mainWindow.ViewModelUserSettings.IPAddress = ip.Text;
+            MainWindow.mainWindow.ViewModelUserSettings.IPAdress = ip.Text;
             // Заполняем порт игрока в модель
             MainWindow.mainWindow.ViewModelUserSettings.Port = port.Text;
             // Заполняем никнейм игрока в модель

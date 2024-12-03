@@ -21,7 +21,7 @@
             <Label Content="Your Name: " HorizontalAlignment="Left" Margin="42,92,0,0" VerticalAlignment="Top" Foreground="Black" FontFamily="Forte"/>
             <TextBox x:Name="ip" HorizontalAlignment="Left" Height="25" Margin="42,62,0,0" TextWrapping="Wrap" Text="127.0.0.1" VerticalAlignment="Top" Width="155" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontFamily="Forte"/>
             <TextBox x:Name="port" HorizontalAlignment="Left" Height="25" Margin="202,62,0,0" TextWrapping="Wrap" Text="5000" VerticalAlignment="Top" Width="74" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontFamily="Forte"/>
-            <TextBox x:Name="name" HorizontalAlignment="Left" Height="25" Margin="42,118,0,0" TextWrapping="Wrap" Text="Kristinka" VerticalAlignment="Top" Width="234" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontFamily="Forte"/>
+            <TextBox x:Name="name" HorizontalAlignment="Left" Height="25" Margin="42,118,0,0" TextWrapping="Wrap" Text="Kristina" VerticalAlignment="Top" Width="234" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontFamily="Forte"/>
             <Button Content="Game" Click="StartGame" HorizontalAlignment="Left" Margin="42,148,0,0" VerticalAlignment="Top" Width="234" Height="25" FontFamily="Forte"/>
         </Grid>
     

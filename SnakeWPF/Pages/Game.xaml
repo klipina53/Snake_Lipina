@@ -12,6 +12,6 @@
         <Grid.Background>
             <ImageBrush ImageSource="C:\Users\klipi\source\repos\Snake_Lipina\SnakeWPF\Image\background_1.jpg" Stretch="UniformToFill"/>
         </Grid.Background>
-        <Canvas x:Name="Canvas"/>
+        <Canvas x:Name="canvas"/>
     </Grid>
 </Page>
