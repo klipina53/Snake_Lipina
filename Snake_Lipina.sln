@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake_Lipina", "Snake_Lipin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{BCB8700F-AE8E-4FA3-BBCA-EC939E0104AB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnakeWPF", "SnakeWPF\SnakeWPF.csproj", "{15AB500A-2EC3-42DF-8673-A15FC7ECB998}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{BCB8700F-AE8E-4FA3-BBCA-EC939E0104AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCB8700F-AE8E-4FA3-BBCA-EC939E0104AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCB8700F-AE8E-4FA3-BBCA-EC939E0104AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15AB500A-2EC3-42DF-8673-A15FC7ECB998}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15AB500A-2EC3-42DF-8673-A15FC7ECB998}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15AB500A-2EC3-42DF-8673-A15FC7ECB998}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15AB500A-2EC3-42DF-8673-A15FC7ECB998}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
