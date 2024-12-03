@@ -13,13 +13,14 @@ using System.IO;
 
 namespace Snake_Lipina
 {
-    internal class Program
+    public class Program
     {
         public static List<Leaders> Leaders = new List<Leaders>();
         public static List<ViewModelUserSettings> remoteIPAddress = new List<ViewModelUserSettings>();
         public static List<ViewModelGames> viewModelGames = new List<ViewModelGames>();
         private static readonly int localPort = 5001;
         public static int MaxSpeed = 15;
+
         private static void Send()
         {
             foreach (ViewModelUserSettings User in remoteIPAddress)
@@ -138,9 +139,9 @@ namespace Snake_Lipina
 
                 direction = Snakes.Direction.Start
             };
-            
+
             viewModelGamesPlayer.Points = new Snakes.Point(new Random().Next(10, 783), new Random().Next(10, 410));
-           
+
             viewModelGames.Add(viewModelGamesPlayer);
             return viewModelGames.FindIndex(x => x == viewModelGamesPlayer);
         }
@@ -289,9 +290,34 @@ namespace Snake_Lipina
 
             SW.Close();
         }
+        public static void LoadLeaders()
+        {
+            if (File.Exists("./leaders.txt"))
+            {
+                StreamReader SR = new StreamReader("./leaders.txt");
 
-        static void Main(string[] args) 
+                string json = SR.ReadLine();
+
+                SR.Close();
+
+                if (!string.IsNullOrEmpty(json))
+                {
+                    Leaders = JsonConvert.DeserializeObject<List<Leaders>>(json);
+                }
+                else
+                {
+                    Leaders = new List<Leaders>();
+                }
+            }
+            else
+            {
+                Leaders = new List<Leaders>();
+            }
+        }
+
+        static void Main(string[] args)
         {
         }
     }
+    
 }
