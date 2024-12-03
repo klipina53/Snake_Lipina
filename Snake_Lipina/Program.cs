@@ -317,6 +317,23 @@ namespace Snake_Lipina
 
         static void Main(string[] args)
         {
+            try
+            {
+                // создаем поток для прослушивания сообщений от клиетов
+                Thread tRec = new Thread(new ThreadStart(Receiver));
+
+                tRec.Start();
+
+                Thread tTime = new Thread(Timer);
+
+                tTime.Start();
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Возникло исключение: " + ex.ToString() + "\n" + ex.Message);
+            }
+
         }
     }
     
