@@ -94,6 +94,23 @@ namespace SnakeWPF
                 Debug.WriteLine("Возникло исключение: " + ex.ToString() + "\n " + ex.Message.ToString());
             }
         }
+        public static void Send(string datagram)
+        {
+            UdpClient sender = new UdpClient();
+            IPEndPoint endPoint = new IPEndPoint(remoteIPAdress, remotePort);
+            try
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(datagram);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Возникло исключение: " + ex.ToString() + "\n " + ex.Message.ToString());
+            }
+            finally
+            {
+                sender.Close();
+            }
+        }
         public MainWindow()
         {
             InitializeComponent();
