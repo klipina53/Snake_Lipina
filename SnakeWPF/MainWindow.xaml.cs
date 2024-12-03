@@ -33,7 +33,11 @@ namespace SnakeWPF
         public UdpClient receivingUdpClient;
         public Pages.Home Home = new Pages.Home();
         public Pages.Game Game = new Pages.Game();
-
+        public void StartReceiver()
+        {
+            tRec = new Thread(new ThreadStart(Receiver));
+            tRec.Start();
+        }
         public MainWindow()
         {
             InitializeComponent();
