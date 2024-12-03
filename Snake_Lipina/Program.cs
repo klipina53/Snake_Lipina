@@ -8,6 +8,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using Common;
+using System.Threading;
 
 namespace Snake_Lipina
 {
@@ -141,6 +142,141 @@ namespace Snake_Lipina
            
             viewModelGames.Add(viewModelGamesPlayer);
             return viewModelGames.FindIndex(x => x == viewModelGamesPlayer);
+        }
+        public static void Timer()
+        {
+            while (true)
+            {
+                Thread.Sleep(100);
+
+                List<ViewModelGames> RemoteSnakes = viewModelGames.FindAll(x => x.SnakesPlayers.GameOver);
+
+                // Удаление змеи
+                if (RemoteSnakes.Count > 0)
+                {
+                    foreach (ViewModelGames DeadSnake in RemoteSnakes)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Отключил пользователя: {remoteIPAddress.Find(x => x.IdSnake == DeadSnake.IdSnake).IPAdress}" +
+                            $":{remoteIPAddress.Find(x => x.IdSnake == DeadSnake.IdSnake)}");
+
+                        remoteIPAddress.RemoveAll(x => x.IdSnake == DeadSnake.IdSnake);
+                    }
+                    viewModelGames.RemoveAll(x => x.SnakesPlayers.GameOver);
+                }
+
+                // Перебираем игроков
+                foreach (ViewModelUserSettings User in remoteIPAddress)
+                {
+                    Snakes snake = viewModelGames.Find(x => x.IdSnake == User.IdSnake).SnakesPlayers;
+                    // Отображение точек змеи
+                    for (int i = snake.Points.Count - 1; i >= 0; i--)
+                    {
+                        if (i != 0)
+                        {
+                            snake.Points[i] = snake.Points[i - 1];
+                        }
+                        else
+                        {
+                            int Speed = 10 + (int)Math.Round(snake.Points.Count / 20f);
+
+                            if (Speed > MaxSpeed) Speed = MaxSpeed;
+
+                            if (snake.direction == Snakes.Direction.Right)
+                            {
+                                snake.Points[i] = new Snakes.Point() { X = snake.Points[i].X + Speed, Y = snake.Points[i].Y };
+                            }
+                            else if (snake.direction == Snakes.Direction.Down)
+                            {
+                                snake.Points[i] = new Snakes.Point() { X = snake.Points[i].X, Y = snake.Points[i].Y + Speed };
+                            }
+                            else if (snake.direction == Snakes.Direction.Up)
+                            {
+                                snake.Points[i] = new Snakes.Point() { X = snake.Points[i].X, Y = snake.Points[i].Y + Speed };
+                            }
+                            else if (snake.direction == Snakes.Direction.Left)
+                            {
+                                snake.Points[i] = new Snakes.Point() { X = snake.Points[i].X + Speed, Y = snake.Points[i].Y };
+                            }
+                        }
+                    }
+
+                    //проверяем выход за карту
+                    if (snake.Points[0].X <= 0 || snake.Points[0].X >= 793)
+                    {
+                        snake.GameOver = true;
+                    }
+                    else if (snake.Points[0].Y <= 0 || snake.Points[0].Y >= 420)
+                    {
+                        snake.GameOver = true;
+                    }
+
+
+                    // проверяем столкновение сами с собой
+                    if (snake.direction != Snakes.Direction.Start)
+                    {
+                        for (int i = 1; i < snake.Points.Count; i++)
+                        {
+                            if (snake.Points[0].X >= snake.Points[i].X - 1 && snake.Points[0].X <= snake.Points[i].X + 1)
+                            {
+                                if (snake.Points[0].Y >= snake.Points[i].Y - 1 && snake.Points[0].Y <= snake.Points[i].Y + 1)
+                                {
+                                    snake.GameOver = true;
+
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    // Проверяем косается ли первая точка змеи яблока
+                    if (snake.Points[0].X >= viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points.X - 15 &&
+                        snake.Points[0].X <= viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points.X + 15)
+                    {
+                        if (snake.Points[0].Y >= viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points.Y - 15 &&
+                        snake.Points[0].Y <= viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points.Y + 15)
+                        {
+                            // создаем новое яблоко
+                            viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points = new Snakes.Point(
+                                new Random().Next(10, 783),
+                                new Random().Next(10, 410));
+
+                            snake.Points.Add(new Snakes.Point()
+                            {
+                                X = snake.Points[snake.Points.Count - 1].X,
+                                Y = snake.Points[snake.Points.Count - 1].Y
+                            });
+
+                            LoadLeaders();
+
+                            Leaders.Add(new Leaders()
+                            {
+                                Name = User.Name,
+                                Points = snake.Points.Count - 3
+                            });
+
+                            Leaders = Leaders.OrderByDescending(x => x.Points).ThenBy(x => x.Name).ToList();
+
+                            viewModelGames.Find(x => x.IdSnake == User.IdSnake).Top =
+                                Leaders.FindIndex(x => x.Points == snake.Points.Count - 3 && x.Name == User.Name) + 1;
+
+                        }
+                    }
+                    // Если игра закончена
+                    if (snake.GameOver)
+                    {
+                        LoadLeaders();
+
+                        Leaders.Add(new Leaders()
+                        {
+                            Name = User.Name,
+                            Points = snake.Points.Count - 3
+                        });
+                    }
+                }
+
+                Send();
+            }
         }
         static void Main(string[] args) 
         {
