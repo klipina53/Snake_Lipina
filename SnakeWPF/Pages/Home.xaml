@@ -9,6 +9,21 @@
       Title="Home">
 
     <Grid>
-        
+        <Grid.Background>
+            <ImageBrush ImageSource="C:\Users\klipi\source\repos\Snake_Lipina\SnakeWPF\Image\background.jpg"/>
+        </Grid.Background>
+        <Grid Width="320" Height="230" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid.Background>
+                <ImageBrush ImageSource="C:\Users\klipi\source\repos\Snake_Lipina\SnakeWPF\Image\background-2.png"/>
+            </Grid.Background>
+            <Label Content="Your IP Adress: " HorizontalAlignment="Left" Margin="42,37,0,0" VerticalAlignment="Top" Foreground="Black" FontFamily="Forte"/>
+            <Label Content="Port: " HorizontalAlignment="Left" Margin="202,37,0,0" VerticalAlignment="Top" Foreground="Black" Width="74" FontFamily="Forte"/>
+            <Label Content="Your Name: " HorizontalAlignment="Left" Margin="42,92,0,0" VerticalAlignment="Top" Foreground="Black" FontFamily="Forte"/>
+            <TextBox x:Name="ip" HorizontalAlignment="Left" Height="25" Margin="42,62,0,0" TextWrapping="Wrap" Text="127.0.0.1" VerticalAlignment="Top" Width="155" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontFamily="Forte"/>
+            <TextBox x:Name="port" HorizontalAlignment="Left" Height="25" Margin="202,62,0,0" TextWrapping="Wrap" Text="5000" VerticalAlignment="Top" Width="74" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontFamily="Forte"/>
+            <TextBox x:Name="name" HorizontalAlignment="Left" Height="25" Margin="42,118,0,0" TextWrapping="Wrap" Text="Artemashka" VerticalAlignment="Top" Width="234" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontFamily="Forte"/>
+            <Button Content="Game" Click="StartGame" HorizontalAlignment="Left" Margin="42,148,0,0" VerticalAlignment="Top" Width="234" Height="25" FontFamily="Forte"/>
+        </Grid>
+    
     </Grid>
 </Page>
