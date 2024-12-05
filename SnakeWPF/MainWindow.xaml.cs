@@ -54,7 +54,7 @@ namespace SnakeWPF
                 endAnimation.From = 0;
                 endAnimation.To = 1;
                 endAnimation.Duration = TimeSpan.FromSeconds(0.6);
-                frame.BeginAnimation(OpacityProperty, startAnimation);
+                frame.BeginAnimation(OpacityProperty, endAnimation);
             };
             frame.BeginAnimation(OpacityProperty, startAnimation);
         }
@@ -91,7 +91,7 @@ namespace SnakeWPF
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Возникло исключение: " + ex.ToString() + "\n " + ex.Message.ToString());
+                Debug.WriteLine("Возникло исключение: " + ex.ToString() + "\n " + ex.Message);
             }
         }
         public static void Send(string datagram)
@@ -101,10 +101,11 @@ namespace SnakeWPF
             try
             {
                 byte[] bytes = Encoding.UTF8.GetBytes(datagram);
+                sender.Send(bytes, bytes.Length, endPoint);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Возникло исключение: " + ex.ToString() + "\n " + ex.Message.ToString());
+                Debug.WriteLine("Возникло исключение: " + ex.ToString() + "\n " + ex.Message);
             }
             finally
             {
@@ -115,10 +116,14 @@ namespace SnakeWPF
         {
             if (!string.IsNullOrEmpty(ViewModelUserSettings.IPAdress) && !string.IsNullOrEmpty(ViewModelUserSettings.Port) && (ViewModelGames != null && !ViewModelGames.SnakesPlayers.GameOver))
             {
-                if (e.Key == Key.Up) Send($"Up|{JsonConvert.SerializeObject(ViewModelUserSettings)}");
-                else if (e.Key == Key.Up) Send($"Down|{JsonConvert.SerializeObject(ViewModelUserSettings)}");
-                else if (e.Key == Key.Left) Send($"Left|{JsonConvert.SerializeObject(ViewModelUserSettings)}");
-                else if (e.Key == Key.Right) Send($"Right|{JsonConvert.SerializeObject(ViewModelUserSettings)}");
+                if (e.Key == Key.Up)
+                    Send($"Up|{JsonConvert.SerializeObject(ViewModelUserSettings)}");
+                else if (e.Key == Key.Down)
+                    Send($"Down|{JsonConvert.SerializeObject(ViewModelUserSettings)}");
+                else if (e.Key == Key.Left)
+                    Send($"Left|{JsonConvert.SerializeObject(ViewModelUserSettings)}");
+                else if (e.Key == Key.Right)
+                    Send($"Right|{JsonConvert.SerializeObject(ViewModelUserSettings)}");
             }
         }
         public MainWindow()

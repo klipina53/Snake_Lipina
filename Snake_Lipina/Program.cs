@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 using System.Net;
 using Newtonsoft.Json;
 using System.Runtime.Remoting.Messaging;
@@ -10,10 +9,12 @@ using System.Threading.Tasks;
 using Common;
 using System.Threading;
 using System.IO;
+using System.Net.Sockets;
+using System.Xml.Linq;
 
 namespace Snake_Lipina
 {
-    public class Program
+    internal class Program
     {
         public static List<Leaders> Leaders = new List<Leaders>();
         public static List<ViewModelUserSettings> remoteIPAddress = new List<ViewModelUserSettings>();
@@ -35,12 +36,12 @@ namespace Snake_Lipina
 
                     sender.Send(bytes, bytes.Length, endPoint);
 
-                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"Отправил данные пользователю: {User.IPAdress}:{User.Port}");
                 }
                 catch (Exception ex)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Возникло исключение: " + ex.ToString() + "\n" + ex.Message);
                 }
                 finally
@@ -58,7 +59,6 @@ namespace Snake_Lipina
 
             try
             {
-                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Команды сервера: ");
 
                 // Цикл для прослушки приходящих сообщений
@@ -112,14 +112,14 @@ namespace Snake_Lipina
                                 viewModelGames[IdPlayer].SnakesPlayers.direction = Snakes.Direction.Left;
 
                             else if (dataMessage[0] == "Right" && viewModelGames[IdPlayer].SnakesPlayers.direction != Snakes.Direction.Left)
-                                viewModelGames[IdPlayer].SnakesPlayers.direction = Snakes.Direction.Left;
+                                viewModelGames[IdPlayer].SnakesPlayers.direction = Snakes.Direction.Right;
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Возникло исключение: " + ex.ToString() + "\n" + ex.Message);
             }
 
@@ -156,11 +156,11 @@ namespace Snake_Lipina
                 // Удаление змеи
                 if (RemoteSnakes.Count > 0)
                 {
-                    foreach (ViewModelGames DeadSnake in RemoteSnakes)
+                    foreach (var DeadSnake in RemoteSnakes)
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"Отключил пользователя: {remoteIPAddress.Find(x => x.IdSnake == DeadSnake.IdSnake).IPAdress}" +
-                            $":{remoteIPAddress.Find(x => x.IdSnake == DeadSnake.IdSnake)}");
+                            $":{remoteIPAddress.Find(x => x.IdSnake == DeadSnake.IdSnake).Port}");
 
                         remoteIPAddress.RemoveAll(x => x.IdSnake == DeadSnake.IdSnake);
                     }
@@ -168,9 +168,9 @@ namespace Snake_Lipina
                 }
 
                 // Перебираем игроков
-                foreach (ViewModelUserSettings User in remoteIPAddress)
+                foreach (var User in remoteIPAddress)
                 {
-                    Snakes snake = viewModelGames.Find(x => x.IdSnake == User.IdSnake).SnakesPlayers;
+                    var snake = viewModelGames.Find(x => x.IdSnake == User.IdSnake).SnakesPlayers;
                     // Отображение точек змеи
                     for (int i = snake.Points.Count - 1; i >= 0; i--)
                     {
@@ -194,21 +194,21 @@ namespace Snake_Lipina
                             }
                             else if (snake.direction == Snakes.Direction.Up)
                             {
-                                snake.Points[i] = new Snakes.Point() { X = snake.Points[i].X, Y = snake.Points[i].Y + Speed };
+                                snake.Points[i] = new Snakes.Point() { X = snake.Points[i].X, Y = snake.Points[i].Y - Speed };
                             }
                             else if (snake.direction == Snakes.Direction.Left)
                             {
-                                snake.Points[i] = new Snakes.Point() { X = snake.Points[i].X + Speed, Y = snake.Points[i].Y };
+                                snake.Points[i] = new Snakes.Point() { X = snake.Points[i].X - Speed, Y = snake.Points[i].Y };
                             }
                         }
                     }
 
                     //проверяем выход за карту
-                    if (snake.Points[0].X <= 0 || snake.Points[0].X >= 793)
+                    if (snake.Points[0].X <= 0 || snake.Points[0].X >= 783)
                     {
                         snake.GameOver = true;
                     }
-                    else if (snake.Points[0].Y <= 0 || snake.Points[0].Y >= 420)
+                    else if (snake.Points[0].Y <= 0 || snake.Points[0].Y >= 410)
                     {
                         snake.GameOver = true;
                     }
@@ -232,38 +232,32 @@ namespace Snake_Lipina
                     }
 
                     // Проверяем косается ли первая точка змеи яблока
-                    if (snake.Points[0].X >= viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points.X - 15 &&
-                        snake.Points[0].X <= viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points.X + 15)
+                    if ((snake.Points[0].X >= viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points.X - 15 &&
+                                   snake.Points[0].X <= viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points.X + 15) &&
+                                  (snake.Points[0].Y >= viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points.Y - 15 &&
+                                   snake.Points[0].Y <= viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points.Y + 15)
+                                 )
                     {
-                        if (snake.Points[0].Y >= viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points.Y - 15 &&
-                        snake.Points[0].Y <= viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points.Y + 15)
+                        viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points = new Snakes.Point(new Random().Next(10, 783),
+                                                                                                      new Random().Next(10, 410));
+                        snake.Points.Add(new Snakes.Point()
                         {
-                            // создаем новое яблоко
-                            viewModelGames.Find(x => x.IdSnake == User.IdSnake).Points = new Snakes.Point(
-                                new Random().Next(10, 783),
-                                new Random().Next(10, 410));
+                            X = snake.Points[snake.Points.Count - 1].X,
+                            Y = snake.Points[snake.Points.Count - 1].Y
+                        });
 
-                            snake.Points.Add(new Snakes.Point()
-                            {
-                                X = snake.Points[snake.Points.Count - 1].X,
-                                Y = snake.Points[snake.Points.Count - 1].Y
-                            });
+                        
 
-                            LoadLeaders();
-
-                            Leaders.Add(new Leaders()
+                        Leaders.Add(new Leaders()
                             {
                                 Name = User.Name,
                                 Points = snake.Points.Count - 3
                             });
 
-                            Leaders = Leaders.OrderByDescending(x => x.Points).ThenBy(x => x.Name).ToList();
-
-                            viewModelGames.Find(x => x.IdSnake == User.IdSnake).Top =
-                                Leaders.FindIndex(x => x.Points == snake.Points.Count - 3 && x.Name == User.Name) + 1;
-
-                        }
+                        Leaders = Leaders.OrderByDescending(x => x.Points).ThenBy(x => x.Name).ToList();
+                        viewModelGames.Find(x => x.IdSnake == User.IdSnake).Top = Leaders.FindIndex(x => x.Points == snake.Points.Count - 3 && x.Name == User.Name) + 1;
                     }
+                    
                     // Если игра закончена
                     if (snake.GameOver)
                     {
@@ -274,6 +268,7 @@ namespace Snake_Lipina
                             Name = User.Name,
                             Points = snake.Points.Count - 3
                         });
+                        SaveLeaders();
                     }
                 }
 
@@ -330,7 +325,7 @@ namespace Snake_Lipina
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Возникло исключение: " + ex.ToString() + "\n" + ex.Message);
             }
 

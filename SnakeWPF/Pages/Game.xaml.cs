@@ -151,7 +151,7 @@ namespace SnakeWPF.Pages
                 // Отрисовка яблока
                 // Изображение яблока
                 ImageBrush myBrush = new ImageBrush();
-                myBrush.ImageSource = new BitmapImage(new Uri($"pack://application:,,,/Image/Apple.jpg"));
+                myBrush.ImageSource = new BitmapImage(new Uri($"pack://application:,,,/Image/Apple.png"));
                 // Яблоко на UI;
                 Ellipse points = new Ellipse()
                 {
